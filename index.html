@@ -5,6 +5,7 @@
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-9FFBTQN8NV"></script>
     <script>
+      console.log('GA Script: Initializing...');
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
@@ -12,6 +13,16 @@
       gtag('config', 'G-9FFBTQN8NV', {
         'debug_mode': true
       });
+      console.log('GA Script: Config sent with ID G-9FFBTQN8NV');
+      
+      // Manual test event
+      setTimeout(() => {
+        gtag('event', 'test_event', {
+          'event_category': 'engagement',
+          'event_label': 'manual_test'
+        });
+        console.log('GA Script: Test event sent');
+      }, 2000);
     </script>
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
