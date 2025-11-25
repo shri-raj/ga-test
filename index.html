@@ -10,6 +10,37 @@
       gtag('js', new Date());
 
       gtag('config', 'G-SKKL7SCXDN');
+
+      // Detect if loaded in iframe and track page loads/refreshes
+      const isInIframe = window.self !== window.top;
+      
+      // Track initial load
+      window.addEventListener('load', function() {
+        gtag('event', 'page_load', {
+          'in_iframe': isInIframe,
+          'page_title': document.title,
+          'page_location': window.location.href
+        });
+        console.log('GA: Page load event sent (iframe:', isInIframe, ')');
+      });
+
+      // Track visibility changes (when iframe becomes visible after being hidden)
+      document.addEventListener('visibilitychange', function() {
+        if (!document.hidden) {
+          gtag('event', 'page_visible', {
+            'in_iframe': isInIframe,
+            'page_title': document.title
+          });
+          console.log('GA: Page visible event sent');
+        }
+      });
+
+      // Track when page gains focus (useful for iframe interactions)
+      window.addEventListener('focus', function() {
+        gtag('event', 'page_focus', {
+          'in_iframe': isInIframe
+        });
+      });
     </script>
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
