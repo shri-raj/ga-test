@@ -2,46 +2,56 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-SKKL7SCXDN"></script>
+
+    <!-- GA Tracking Snippet -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{MEASUREMENT_ID}}"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
+      gtag('config', '{{MEASUREMENT_ID}}');
 
-      gtag('config', 'G-SKKL7SCXDN');
-
-      // Detect if loaded in iframe and track page loads/refreshes
       const isInIframe = window.self !== window.top;
-      
-      // Track initial load
-      window.addEventListener('load', function() {
+
+      // Track initial page load
+      window.addEventListener('load', () => {
         gtag('event', 'page_load', {
-          'in_iframe': isInIframe,
-          'page_title': document.title,
-          'page_location': window.location.href
+          in_iframe: isInIframe,
+          page_title: document.title,
+          page_location: window.location.href
         });
-        console.log('GA: Page load event sent (iframe:', isInIframe, ')');
+        console.log('GA: page_load sent', document.title);
       });
 
-      // Track visibility changes (when iframe becomes visible after being hidden)
-      document.addEventListener('visibilitychange', function() {
+      // Track visibility changes
+      document.addEventListener('visibilitychange', () => {
         if (!document.hidden) {
           gtag('event', 'page_visible', {
-            'in_iframe': isInIframe,
-            'page_title': document.title
+            in_iframe: isInIframe,
+            page_title: document.title
           });
-          console.log('GA: Page visible event sent');
+          console.log('GA: page_visible sent', document.title);
         }
       });
 
-      // Track when page gains focus (useful for iframe interactions)
-      window.addEventListener('focus', function() {
-        gtag('event', 'page_focus', {
-          'in_iframe': isInIframe
-        });
+      // Track focus events
+      window.addEventListener('focus', () => {
+        gtag('event', 'page_focus', { in_iframe: isInIframe });
+        console.log('GA: page_focus sent');
+      });
+
+      // Global button click tracking
+      document.addEventListener('click', (e) => {
+        const target = e.target;
+        if (target.tagName === 'BUTTON') {
+          const label = target.id || target.textContent?.trim() || 'unknown_button';
+          gtag('event', 'button_click', { label });
+          console.log('GA: button_click sent for', label);
+        }
       });
     </script>
+
+
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ga-test</title>
