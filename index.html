@@ -3,20 +3,32 @@
   <head>
     <meta charset="UTF-8" />
 
-    <!-- GA Tracking Snippet -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-SKKL7SCXDN"></script>
+    <!-- GA Tracking Snippet - IDs injected from environment -->
     <script>
+      window.__GA_IDS__ = __GA_IDS_JSON__;
+      
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-SKKL7SCXDN');
-      gtag('config', 'G-B0YBBWSND4')
+      
+      if (window.__GA_IDS__.length > 0) {
+        var gtagScript = document.createElement('script');
+        gtagScript.async = true;
+        gtagScript.src = 'https://www.googletagmanager.com/gtag/js?id=' + window.__GA_IDS__[0];
+        document.head.appendChild(gtagScript);
+        gtag('js', new Date());
+        window.__GA_IDS__.forEach(function(id) {
+          gtag('config', id);
+          console.log('GA: Configured', id);
+        });
+      } else {
+        console.log('GA: No measurement IDs configured');
+      }
 
       const isInIframe = window.self !== window.top;
 
       // Track initial page load
       window.addEventListener('load', () => {
+        if (window.__GA_IDS__.length === 0) return;
         gtag('event', 'page_load', {
           in_iframe: isInIframe,
           page_title: document.title,
@@ -27,6 +39,7 @@
 
       // Track visibility changes
       document.addEventListener('visibilitychange', () => {
+        if (window.__GA_IDS__.length === 0) return;
         if (!document.hidden) {
           gtag('event', 'page_visible', {
             in_iframe: isInIframe,
@@ -38,12 +51,14 @@
 
       // Track focus events
       window.addEventListener('focus', () => {
+        if (window.__GA_IDS__.length === 0) return;
         gtag('event', 'page_focus', { in_iframe: isInIframe });
         console.log('GA: page_focus sent');
       });
 
       // Global button click tracking
       document.addEventListener('click', (e) => {
+        if (window.__GA_IDS__.length === 0) return;
         const target = e.target;
         if (target.tagName === 'BUTTON') {
           const label = target.id || target.textContent?.trim() || 'unknown_button';
